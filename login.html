@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - COD Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0f172a; color: white; font-family: sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; }
+        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .input-field { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; outline: none; }
+        .input-field:focus { border-color: #3b82f6; }
+    </style>
+</head>
+<body>
+
+<div class="glass w-full max-w-md p-8 rounded-2xl mx-4">
+    <div class="text-center mb-6">
+        <h1 class="text-2xl font-bold text-blue-400 mb-2">تسجيل الدخول 👋</h1>
+        <p class="text-gray-400 text-sm">أدخل بياناتك للمتابعة</p>
+    </div>
+
+    <form id="loginForm" class="space-y-4">
+        <div>
+            <label class="block text-sm text-gray-300 mb-1">البريد الإلكتروني</label>
+            <input type="email" id="email" required class="input-field w-full px-4 py-3 rounded-xl" placeholder="name@example.com">
+        </div>
+        <div>
+            <label class="block text-sm text-gray-300 mb-1">كلمة المرور</label>
+            <input type="password" id="password" required class="input-field w-full px-4 py-3 rounded-xl" placeholder="••••••••">
+        </div>
+
+        <button type="submit" id="submitBtn" class="w-full py-3 rounded-xl font-bold bg-blue-600 hover:bg-blue-500 transition shadow-lg text-white">
+            دخول
+        </button>
+
+        <div id="errorMsg" class="text-red-400 text-sm text-center hidden p-2 bg-red-500/10 rounded"></div>
+    </form>
+
+    <div class="mt-6 text-center text-sm text-gray-400">
+        ليس لديك حساب؟ <a href="signup.html" class="text-blue-400 hover:underline">أنشئ حساب جديد</a>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBoDXsELYXl440Wb3bd6xir0sMbj-6LSIA",
+        authDomain: "cod-pricing.firebaseapp.com",
+        projectId: "cod-pricing",
+        storageBucket: "cod-pricing.firebasestorage.app",
+        messagingSenderId: "815665273956",
+        appId: "1:815665273956:web:6a496b1d28da2aa0b25371",
+        measurementId: "G-7XLMBDYNXG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) window.location.href = "index.html";
+    });
+
+    const form = document.getElementById('loginForm');
+    const msg = document.getElementById('errorMsg');
+    const btn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        btn.disabled = true;
+        btn.innerHTML = "جاري التحقق...";
+        msg.classList.add('hidden');
+
+        try {
+            await signInWithEmailAndPassword(auth, email, password);
+        } catch (error) {
+            msg.textContent = "بيانات الدخول غير صحيحة";
+            msg.classList.remove('hidden');
+            btn.disabled = false;
+            btn.innerHTML = "دخول";
+        }
+    });
+</script>
+</body>
+</html>
